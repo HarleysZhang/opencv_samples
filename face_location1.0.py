@@ -32,7 +32,7 @@ def repeat():
     cv2.line(frame, (0,160),(640,160), (0,255,255),1) 
     cv2.line(frame, (0,320),(640,320), (0,255,255),1) 
     # detect objects  
-    cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
+    cascade = cv2.CascadeClassifier('./data/haarcascade_frontalface_alt2.xml')
     #加载Intel公司的训练库  
       
     #检测图片中的人脸，并返回一个包含了人脸信息的对象faces  
@@ -44,11 +44,11 @@ def repeat():
     for (x,y,w,h) in faces:
        # print x,y
         if x<200:
-            print "right"
+            print("right")
         elif x>320:
-            print "left"
+            print("left")
         else:
-            print "middle"
+            print("middle")
         cv2.rectangle(frame, (x,y), (x+w,y+h), (0,128,0),2)#在相应位置标识一个矩形 边框属性(0,0,255)红色 20宽度
           
         cv2.imshow("image", greyscale)#显示互有边框的图片
