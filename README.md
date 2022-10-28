@@ -33,7 +33,7 @@
 
 ![给人的头顶加上帽子](./face_detect_demo/images/add_hat.png)
 
-5，[人脸检测+抖音特效+1024特效功能](face_detect_demo/opencv_face_demo.py)
+5，[视频流中实现人脸检测+抖音特效+1024特效功能](face_detect_demo/opencv_face_demo.py)
 
 ![效果图](./face_detect_demo/images/output.png)
 
