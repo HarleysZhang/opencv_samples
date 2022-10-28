@@ -22,20 +22,20 @@
 
 2，[人脸抖音晃眼睛特效](face_detect_demo/douyin_effect.py)
 
-![对比图](./images/douyin_effect.png)
+![对比图](./face_detect_demo/images/douyin_effect.png)
 
 3，[头顶加LOGO标志](face_detect_demo/add_logo.py)
 
-![给程序员加上1024节日庆祝标志](./images/add_logo_on_head.png)
-![给程序员加上1024节日庆祝标志](./images/add_logo.png)
+![给程序员加上1024节日庆祝标志](./face_detect_demo/images/add_logo2.png)
+![给程序员加上1024节日庆祝标志](./face_detect_demo/images/add_logo.png)
 
 4，[头顶加帽子](face_detect_demo/add_hat.py)
 
-![给人的头顶加上帽子](./images/add_hat.png)
+![给人的头顶加上帽子](./face_detect_demo/images/add_hat.png)
 
 5，[人脸检测+抖音特效+1024特效功能](face_detect_demo/opencv_face_demo.py)
 
-![效果图](./images/output.png)
+![效果图](./face_detect_demo/images/output.png)
 
 ## Reference
 1. [LearnOpenCV](https://learnopencv.com/read-display-and-write-an-image-using-opencv/)

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 # Load two images
 img1 = cv2.imread('./images/programmer.png') # shape is (h, w, c): (1200, 1800, 3)
-img2 = cv2.imread('./images/10242.png') # shape is (862, 1264, 3)
+img2 = cv2.imread('./images/10246.png') # shape is (862, 1264, 3)
 # x, y, w, h = 739, 276, 253, 253 # 人脸 box 信息
 thresh_set = 45
 plt.figure('imread picture', figsize=(25,25))
@@ -91,4 +91,4 @@ if __name__ == "__main__":
         out_img = add_logo(img1, x, y, w, h, img2)
         # out_img = two_image_algorithm(img1, x, y, w, h, img2)
     
-    cv2.imwrite('./images/add_logo.png', out_img)
+    cv2.imwrite('./images/add_logo2.png', out_img)
