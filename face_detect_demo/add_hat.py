@@ -9,56 +9,37 @@ hat_img_bgra = cv2.imread("./images/hat.png", -1) # 图像需为PNG格式（方�
 r, g, b, a = cv2.split(hat_img_bgra)
 hat_rgb = cv2.merge((r, g, b)) # 把 rgb 三通道合成一张rgb的彩色图, shape is (height, width, channel)
 
-def add_hat(img1, x, y, w, h, hat_rgb):
-    center = int(x + w/2)
-    # I want to put logo on the head, So I create a ROI
-    scaled_factor = w / hat_rgb.shape[1]
-    resized_hat_h = int(round(hat_rgb.shape[0] * scaled_factor))
-    bg_roi = img1[y - resized_hat_h : y, x : x + w]
-    
-    
-    # 根据人脸大小调整节日 logo 大小(公式随意，比例一致即可)
-    # ***********************************************************
-    factor = 1.0 # 可调
-    # ***********************************************************
-    scaled_factor = w/hat_rgb.shape[1] # 缩放比例计算
-    # 根据人脸大小缩放后的节日 logo 尺寸
-    resized_hat_h = int(round(hat_rgb.shape[0] * scaled_factor))
-    resized_hat_w = int(round(hat_rgb.shape[1] * scaled_factor * factor))
+def add_hat(img1, x, y, w, h, img2):
+    # 1, 将标志图像缩放到合适尺寸，并以此在原图上创建 ROI，同时将标志图像缩放，并显示
+    # I want put img2 on img1's roi, So I create roi
+    scaled_factor = w/img2.shape[1]
+    resized_hat_h = int(round(img2.shape[0] * scaled_factor))
     if resized_hat_h > y:
         resized_hat_h = y-1		#可调
-    
-    hat_resized = cv2.resize(hat_rgb, (resized_hat_w, resized_hat_h))
-    
-    mask = cv2.resize(a, (resized_hat_w, resized_hat_h))
-    mask_inv = cv2.bitwise_not(mask)
- 
-    # LOGO 相对于人脸框上线的偏移量
-    # ***********************************************************
-    dh = 0			# 可调
-    dw = -10		# < 0，左移，> 0右移
-    # ***********************************************************
-    # 原图 ROI(这个公式原则上也可调)
-    bg_roi = img1[y + dh - resized_hat_h : y + dh, 
-                  (center + dw - resized_hat_w//3):(center + dw + resized_hat_w//3*2)]
-    # 原图 ROI 中提取放 LOGO 的区域
-    bg_roi = bg_roi.astype(float)
-    mask_inv = cv2.merge((mask_inv, mask_inv, mask_inv))
-    alpha = mask_inv.astype(float)/255
-    # 相乘之前保证两者大小一致（可能会由于四舍五入原因不一致）
-    alpha = cv2.resize(alpha, (bg_roi.shape[1], bg_roi.shape[0]))
-    bg = cv2.multiply(alpha, bg_roi)
-    bg = bg.astype('uint8')
+    img1_roi = img1[y - resized_hat_h : y, x : x + w] # 原ROI中提取放LOGO的区域, roi shape is (173, 253, 3)
+    img2_resized = cv2.resize(img2, (img1_roi.shape[1], img1_roi.shape[0])) # 将img2缩放到roi一样大小
 
-    # 提取帽子区域
-    hat = cv2.bitwise_and(hat_resized, hat_resized, mask=mask)
-    # 添加圣诞帽
-    hat = cv2.resize(hat, (bg_roi.shape[1], bg_roi.shape[0]))
-    
-    # 两个ROI区域相加
-    add_hat = cv2.add(bg, hat)
-    # 把添加好帽子的区域放回原图
-    img1[y + dh - resized_hat_h: y + dh, (center + dw - resized_hat_w//3):(center + dw + resized_hat_w//3*2)] = add_hat
+    print(img1_roi.shape, img2_resized.shape)
+
+    # 2，得到背景图和前景图的alpha通道，即alpha掩模
+    b, g, r, a = cv2.split(img2_resized)
+    fg = cv2.merge((b, g, r))
+    alpha = cv2.merge((a, a, a)) # 得到前景PNG图像的alpha通道，即alpha掩模
+    cv2.imwrite("alpha.jpg",alpha)
+    # plt_show_two(img1_roi, alpha, "will be changed roi in img1", "resized img2")
+
+    # 3, 加权乘法运算之前的一些预处理工作
+    background = img1_roi.astype(float) # 将数据类型设为float，防止后续乘法运算发生溢出操作
+    foreground = fg.astype(float)
+    alpha = alpha.astype(float)/255 #将alpha的值归一化在0-1之间，作为加权系数
+
+    # 4, 前景和背景roi图分别乘以对应alpha掩模，前景部分为1（alpha），背景部分为0（1-alpha）
+    # 将前景和背景进行加权，每个像素的加权系数即为alpha掩模对应位置像素的值，
+    foreground = cv2.multiply(alpha,foreground)
+    background = cv2.multiply(1-alpha,background)
+
+    add_ret = cv2.add(background, foreground)
+    img1[y - resized_hat_h : y, x : x + w] = add_ret
     return img1
 
 if __name__ == "__main__":
